@@ -1,10 +1,21 @@
 FROM php:8.2-apache
 
+# Install dependency dan composer
+RUN apt-get update && apt-get install -y \
+    unzip \
+    git \
+    curl
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 # Set working directory ke folder web server
 WORKDIR /var/www/html
 
 # Salin semua file aplikasi ke dalam container
 COPY . /var/www/html
+
+# Jalankan composer install
+RUN composer install --no-dev --optimize-autoloader
 
 # Set permission yang benar (wajib)
 RUN chown -R www-data:www-data /var/www/html \
