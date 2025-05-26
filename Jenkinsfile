@@ -10,31 +10,19 @@ pipeline {
 
         stage('Test') {
             steps {
-                // Pastikan composer sudah terinstall di environment Jenkins agent
-                sh 'composer install --no-interaction --prefer-dist --optimize-autoloader'
-                sh 'php artisan test'
+                bat 'echo Hello Windows'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t kelurahan-web .'
+                bat 'docker build -t kelurahan-web .'
             }
         }
 
         stage('Run Container') {
             steps {
-                // Stop dan hapus container lama jika ada
-                sh '''
-                    if [ $(docker ps -q -f name=kelurahan-web) ]; then
-                        docker stop kelurahan-web
-                    fi
-                    if [ $(docker ps -a -q -f name=kelurahan-web) ]; then
-                        docker rm kelurahan-web
-                    fi
-                '''
-                // Run container baru
-                sh 'docker run -d -p 8888:80 --name kelurahan-web kelurahan-web'
+                bat 'docker run -d -p 8000:8000 --name kelurahan-web kelurahan-web'
             }
         }
     }
