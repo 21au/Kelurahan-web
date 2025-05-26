@@ -10,8 +10,9 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'composer install'   // Install dependencies dulu kalau perlu
-                sh 'php artisan test'   // Jalankan test Laravel
+                // Pastikan composer sudah terinstall di environment Jenkins agent
+                sh 'composer install --no-interaction --prefer-dist --optimize-autoloader'
+                sh 'php artisan test'
             }
         }
 
@@ -23,8 +24,16 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                sh 'docker stop kelurahan-web || true'
-                sh 'docker rm kelurahan-web || true'
+                // Stop dan hapus container lama jika ada
+                sh '''
+                    if [ $(docker ps -q -f name=kelurahan-web) ]; then
+                        docker stop kelurahan-web
+                    fi
+                    if [ $(docker ps -a -q -f name=kelurahan-web) ]; then
+                        docker rm kelurahan-web
+                    fi
+                '''
+                // Run container baru
                 sh 'docker run -d -p 8888:80 --name kelurahan-web kelurahan-web'
             }
         }
