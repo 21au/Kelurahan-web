@@ -22,7 +22,12 @@ pipeline {
 
         stage('Run Container') {
             steps {
-                bat 'docker run -d -p 8000:8000 --name kelurahan-web kelurahan-web'
+                // Stop dan hapus container lama jika ada, tanpa error jika tidak ada
+                bat '''
+                docker stop kelurahan-web || exit 0
+                docker rm kelurahan-web || exit 0
+                docker run -d -p 8000:8000 --name kelurahan-web kelurahan-web
+                '''
             }
         }
     }
