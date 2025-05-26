@@ -8,15 +8,24 @@ pipeline {
             }
         }
 
+        stage('Test') {
+            steps {
+                sh 'composer install'   // Install dependencies dulu kalau perlu
+                sh 'php artisan test'   // Jalankan test Laravel
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t kelurahan-web .'
+                sh 'docker build -t kelurahan-web .'
             }
         }
 
         stage('Run Container') {
             steps {
-                bat 'docker run -d -p 8000:8000 --name kelurahan-web kelurahan-web'
+                sh 'docker stop kelurahan-web || true'
+                sh 'docker rm kelurahan-web || true'
+                sh 'docker run -d -p 8888:80 --name kelurahan-web kelurahan-web'
             }
         }
     }
