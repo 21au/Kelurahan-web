@@ -10,15 +10,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t kelurahan-web .'
+                bat 'docker build -t kelurahan-web .'
             }
         }
 
         stage('Run Container') {
             steps {
-                sh 'docker stop kelurahan-web || true'
-                sh 'docker rm kelurahan-web || true'
-                sh 'docker run -d -p 8888:80 --name kelurahan-web kelurahan-web'
+                bat 'docker run -d -p 8000:8000 --name kelurahan-web kelurahan-web'
             }
         }
     }
